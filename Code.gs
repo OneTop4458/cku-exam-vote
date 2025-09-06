@@ -108,30 +108,16 @@ function doOptions(e) {
 function _json(obj) {
   return ContentService
     .createTextOutput(JSON.stringify(obj))
-    .setMimeType(ContentService.MimeType.JSON)
-    .setHeaders({
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type, Authorization'
-    });
+    .setMimeType(ContentService.MimeType.JSON);
 }
 
 /** ---------- Handlers ---------- */
 function doGet(e) {
-  // CORS 헤더 추가
-  const corsHeaders = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-    'Access-Control-Max-Age': '86400'
-  };
-
   // OPTIONS 요청 처리 (CORS preflight)
   if (e && e.parameter && e.parameter.method === 'OPTIONS') {
-    return ContentService
-      .createTextOutput('')
-      .setMimeType(ContentService.MimeType.TEXT)
-      .setHeaders(corsHeaders);
+    return HtmlService
+      .createHtmlOutput('')
+      .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
   }
 
   const sh = _getSheet_();
@@ -210,20 +196,11 @@ function doGet(e) {
 }
 
 function doPost(e) {
-  // CORS 헤더 추가
-  const corsHeaders = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-    'Access-Control-Max-Age': '86400'
-  };
-
   // OPTIONS 요청 처리 (CORS preflight)
   if (e && e.parameter && e.parameter.method === 'OPTIONS') {
-    return ContentService
-      .createTextOutput('')
-      .setMimeType(ContentService.MimeType.TEXT)
-      .setHeaders(corsHeaders);
+    return HtmlService
+      .createHtmlOutput('')
+      .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
   }
 
   try {
