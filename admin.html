@@ -1,0 +1,682 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>관리자 도구 - 시험 시간 투표</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { font-family: 'Noto Sans KR', sans-serif; }
+
+    /* 관리자 페이지 전용 스타일 */
+    .admin-gradient-bg { background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%); }
+    .admin-card {
+      background: white;
+      border-radius: 24px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      transition: all 0.3s ease;
+    }
+    .admin-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.15);
+    }
+
+    .admin-input {
+      border-radius: 16px;
+      border: 2px solid #e2e8f0;
+      transition: all 0.3s ease;
+      background: rgba(255, 255, 255, 0.9);
+    }
+    .admin-input:focus {
+      border-color: #4f46e5;
+      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+      background: white;
+    }
+
+    .admin-btn-primary {
+      background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+      box-shadow: 0 4px 15px rgba(79, 70, 229, 0.4);
+      transition: all 0.3s ease;
+      border-radius: 16px;
+    }
+    .admin-btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(79, 70, 229, 0.6);
+    }
+
+    .admin-btn-secondary {
+      background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+      box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4);
+      transition: all 0.3s ease;
+      border-radius: 16px;
+    }
+    .admin-btn-secondary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(245, 158, 11, 0.6);
+    }
+
+    .admin-btn-danger {
+      background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+      box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4);
+      transition: all 0.3s ease;
+      border-radius: 16px;
+    }
+    .admin-btn-danger:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(239, 68, 68, 0.6);
+    }
+
+    .section-card {
+      background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.7) 100%);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.3);
+      border-radius: 20px;
+      transition: all 0.3s ease;
+    }
+    .section-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    .status-badge {
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 0.875rem;
+      font-weight: 500;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .fade-in { animation: fadeIn 0.3s ease-out; }
+  </style>
+</head>
+<body class="admin-gradient-bg min-h-screen py-8">
+  <div class="max-w-4xl mx-auto px-4">
+    <!-- 헤더 -->
+    <div class="text-center mb-8">
+      <div class="inline-flex items-center justify-center w-20 h-20 bg-white rounded-full mb-6 shadow-xl">
+        <i class="fas fa-cog text-4xl text-indigo-600"></i>
+      </div>
+      <h1 class="text-4xl font-bold text-white mb-2">관리자 도구</h1>
+      <p class="text-indigo-100 text-lg">시험 시간 투표 시스템 관리</p>
+    </div>
+
+    <div class="admin-card p-8">
+
+      <!-- 인증 섹션 -->
+      <div id="authSection" class="text-center">
+        <div class="mb-8">
+          <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full mb-4 shadow-lg">
+            <i class="fas fa-shield-alt text-2xl text-white"></i>
+          </div>
+          <h2 class="text-2xl font-bold text-gray-800 mb-2">관리자 인증</h2>
+          <p class="text-gray-600">시스템 관리 권한을 확인합니다</p>
+        </div>
+
+        <div class="space-y-6 max-w-md mx-auto">
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-2 flex items-center">
+              <i class="fas fa-key mr-2 text-indigo-500"></i>관리자 비밀번호
+            </label>
+            <input id="apiKey" type="password" class="admin-input w-full px-4 py-3 text-gray-700 placeholder-gray-400" placeholder="관리자 비밀번호를 입력하세요" />
+          </div>
+
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-2 flex items-center">
+              <i class="fas fa-link mr-2 text-indigo-500"></i>GAS 웹앱 URL
+            </label>
+            <input id="gasUrl" type="text" class="admin-input w-full px-4 py-3 text-gray-700 placeholder-gray-400" placeholder="https://script.google.com/macros/s/.../exec" />
+            <p class="text-xs text-indigo-600 mt-2 flex items-center">
+              <i class="fas fa-info-circle mr-1"></i>
+              index.html의 GAS_URL과 동일한 값
+            </p>
+          </div>
+
+          <button id="btnAuth" class="admin-btn-primary w-full py-4 px-6 text-white font-bold text-lg shadow-xl">
+            <i class="fas fa-lock mr-3"></i>인증하기
+            <i class="fas fa-arrow-right ml-3"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- 관리자 기능 섹션 -->
+      <div id="adminSection" class="hidden fade-in">
+        <div class="border-t border-gray-200 pt-8 mt-8">
+          <div class="text-center mb-8">
+            <div class="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-full mb-4">
+              <i class="fas fa-check-circle text-xl text-white"></i>
+            </div>
+            <h2 class="text-2xl font-bold text-gray-800 mb-2">관리자 모드 활성화</h2>
+            <p class="text-gray-600">시스템 관리 기능을 사용할 수 있습니다</p>
+          </div>
+
+          <!-- URL 조회/변경 -->
+          <div class="section-card p-6 mb-6">
+            <div class="flex items-center mb-4">
+              <i class="fas fa-link text-indigo-600 mr-3 text-xl"></i>
+              <h3 class="text-xl font-semibold text-gray-800">GAS URL 관리</h3>
+            </div>
+            <div class="flex gap-3">
+              <input id="currentUrl" type="text" class="admin-input flex-1 px-4 py-3 text-gray-700" readonly />
+              <button id="btnUpdateUrl" class="admin-btn-secondary px-6 py-3 text-white font-medium">
+                <i class="fas fa-edit mr-2"></i>변경
+              </button>
+            </div>
+          </div>
+
+          <!-- 투표 기본 설정 -->
+          <div class="section-card p-6 mb-6">
+            <div class="flex items-center mb-6">
+              <i class="fas fa-edit text-blue-600 mr-3 text-xl"></i>
+              <h3 class="text-xl font-semibold text-gray-800">투표 기본 설정</h3>
+            </div>
+
+            <!-- 대학 목록 설정 -->
+            <div class="border-t border-gray-200 pt-6 mt-6">
+              <div class="flex items-center justify-between mb-4">
+                <h4 class="text-lg font-semibold text-gray-800 flex items-center">
+                  <i class="fas fa-university mr-2 text-green-600"></i>
+                  대학 목록 설정
+                </h4>
+                <button id="addUniversity" class="admin-btn-secondary px-4 py-2 text-sm">
+                  <i class="fas fa-plus mr-1"></i>대학 추가
+                </button>
+              </div>
+
+              <div id="universityListContainer" class="space-y-3 mb-4">
+                <!-- 대학 목록이 동적으로 추가됩니다 -->
+              </div>
+
+              <p class="text-sm text-gray-600">
+                <i class="fas fa-info-circle mr-1"></i>
+                투표 참여자들이 선택할 수 있는 대학 목록을 설정할 수 있습니다
+              </p>
+            </div>
+          </div>
+
+            <div class="space-y-6">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2 flex items-center">
+                  <i class="fas fa-heading mr-2 text-blue-500"></i>투표 제목
+                </label>
+                <input id="votingTitle" type="text" class="admin-input w-full px-4 py-3" placeholder="시험 시간 투표" />
+              </div>
+
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2 flex items-center">
+                  <i class="fas fa-align-left mr-2 text-blue-500"></i>투표 설명
+                </label>
+                <textarea id="votingDescription" class="admin-input w-full px-4 py-3 h-20 resize-none" placeholder="토요일에 불가능한 시간만 체크해주세요."></textarea>
+              </div>
+
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2 flex items-center">
+                  <i class="fas fa-check-square mr-2 text-green-500"></i>모든 시간 가능 옵션
+                </label>
+                <label class="flex items-center space-x-3 cursor-pointer">
+                  <input type="checkbox" id="allowAllAvailable" class="admin-input w-5 h-5">
+                  <span class="text-sm font-medium">사용자가 "모든 시간 가능"을 선택할 수 있게 허용</span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- 투표 날짜/시간 설정 -->
+          <div class="section-card p-6 mb-6">
+            <div class="flex items-center mb-6">
+              <i class="fas fa-calendar-alt text-green-600 mr-3 text-xl"></i>
+              <h3 class="text-xl font-semibold text-gray-800">투표 기간 및 시간 설정</h3>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+              <div class="space-y-4">
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2 flex items-center">
+                    <i class="fas fa-calendar-plus mr-2 text-green-500"></i>시작 날짜
+                  </label>
+                  <input id="voteStartDate" type="date" class="admin-input w-full px-4 py-3" />
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2 flex items-center">
+                    <i class="fas fa-clock mr-2 text-green-500"></i>시작 시간
+                  </label>
+                  <input id="voteStartTime" type="time" class="admin-input w-full px-4 py-3" />
+                </div>
+              </div>
+
+              <div class="space-y-4">
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2 flex items-center">
+                    <i class="fas fa-calendar-minus mr-2 text-red-500"></i>종료 날짜
+                  </label>
+                  <input id="voteEndDate" type="date" class="admin-input w-full px-4 py-3" />
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2 flex items-center">
+                    <i class="fas fa-clock mr-2 text-red-500"></i>종료 시간
+                  </label>
+                  <input id="voteEndTime" type="time" class="admin-input w-full px-4 py-3" />
+                </div>
+              </div>
+            </div>
+
+            <!-- 시간 불가 설정 -->
+            <!-- 시간 옵션 설정 -->
+            <div class="border-t border-gray-200 pt-6 mt-6">
+              <div class="flex items-center justify-between mb-4">
+                <h4 class="text-lg font-semibold text-gray-800 flex items-center">
+                  <i class="fas fa-clock mr-2 text-purple-600"></i>
+                  시간 옵션 설정
+                </h4>
+                <button id="addTimeOption" class="admin-btn-secondary px-4 py-2 text-sm">
+                  <i class="fas fa-plus mr-1"></i>시간 추가
+                </button>
+              </div>
+
+              <div id="timeOptionsContainer" class="space-y-3 mb-4">
+                <!-- 시간 옵션들이 동적으로 추가됩니다 -->
+              </div>
+
+              <p class="text-sm text-gray-600">
+                <i class="fas fa-info-circle mr-1"></i>
+                각 시간 옵션의 이모지, 라벨, 설명을 설정할 수 있습니다
+              </p>
+            </div>
+
+            <!-- 불가능한 시간 설정 -->
+            <div class="border-t border-gray-200 pt-6 mt-6">
+              <h4 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                <i class="fas fa-ban mr-2 text-red-600"></i>
+                불가능한 시간 설정
+              </h4>
+              <div id="unavailableTimesContainer" class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                <!-- 불가능한 시간 체크박스들이 동적으로 추가됩니다 -->
+              </div>
+              <p class="text-sm text-gray-600">
+                <i class="fas fa-info-circle mr-1"></i>
+                체크된 시간은 투표에서 선택할 수 없게 됩니다
+              </p>
+            </div>
+
+            <div class="flex gap-3 mt-6">
+              <button id="btnUpdateSettings" class="admin-btn-primary flex-1 py-3 px-6 text-white font-medium">
+                <i class="fas fa-save mr-2"></i>설정 저장
+              </button>
+              <button id="btnLoadSettings" class="admin-btn-secondary flex-1 py-3 px-6 text-white font-medium">
+                <i class="fas fa-sync mr-2"></i>설정 불러오기
+              </button>
+            </div>
+          </div>
+
+          <!-- 데이터 관리 -->
+          <div class="section-card p-6 mb-6">
+            <div class="flex items-center mb-6">
+              <i class="fas fa-database text-blue-600 mr-3 text-xl"></i>
+              <h3 class="text-xl font-semibold text-gray-800">데이터 관리</h3>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <button id="btnCsv" class="admin-btn-primary py-4 px-6 text-white font-medium text-center">
+                <i class="fas fa-download mr-3 text-xl"></i>
+                <div>
+                  <div class="font-bold">원본 CSV</div>
+                  <div class="text-sm opacity-90">다운로드</div>
+                </div>
+              </button>
+              <button id="btnClear" class="admin-btn-danger py-4 px-6 text-white font-medium text-center">
+                <i class="fas fa-trash mr-3 text-xl"></i>
+                <div>
+                  <div class="font-bold">투표 초기화</div>
+                  <div class="text-sm opacity-90">모든 데이터 삭제</div>
+                </div>
+              </button>
+            </div>
+          </div>
+
+          <!-- 로그아웃 -->
+          <div class="text-center">
+            <button id="btnLogout" class="admin-btn-secondary w-full py-4 px-6 text-white font-medium text-lg">
+              <i class="fas fa-sign-out-alt mr-3"></i>관리자 모드 종료
+              <i class="fas fa-arrow-left ml-3"></i>
+            </button>
+          </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let currentApiKey = '';
+    let currentGasUrl = '';
+
+    // 인증 함수
+    async function authenticate() {
+      const apiKey = document.getElementById('apiKey').value.trim();
+      const gasUrl = document.getElementById('gasUrl').value.trim();
+
+      if (!apiKey || !gasUrl) {
+        alert('비밀번호와 GAS URL을 모두 입력하세요.');
+        return false;
+      }
+
+      try {
+        // 간단한 인증 테스트 (설정 조회 시도)
+        const res = await fetch(gasUrl + '?apiKey=' + encodeURIComponent(apiKey));
+        const data = await res.json();
+
+        if (data.ok !== undefined) {
+          currentApiKey = apiKey;
+          currentGasUrl = gasUrl;
+          document.getElementById('currentUrl').value = gasUrl;
+          showAdminSection();
+          return true;
+        } else {
+          alert('인증 실패: 잘못된 비밀번호입니다.');
+          return false;
+        }
+      } catch (err) {
+        alert('인증 실패: ' + (err.message || '네트워크 오류'));
+        return false;
+      }
+    }
+
+    function showAdminSection() {
+      document.getElementById('authSection').classList.add('hidden');
+      document.getElementById('adminSection').classList.remove('hidden');
+    }
+
+    function showAuthSection() {
+      document.getElementById('adminSection').classList.add('hidden');
+      document.getElementById('authSection').classList.remove('hidden');
+      document.getElementById('apiKey').value = '';
+      currentApiKey = '';
+      currentGasUrl = '';
+    }
+
+    // 이벤트 리스너들
+    document.getElementById('btnAuth').addEventListener('click', authenticate);
+
+    document.getElementById('btnUpdateUrl').addEventListener('click', () => {
+      const newUrl = prompt('새로운 GAS URL을 입력하세요:', currentGasUrl);
+      if (newUrl && newUrl.trim() !== currentGasUrl) {
+        currentGasUrl = newUrl.trim();
+        document.getElementById('currentUrl').value = currentGasUrl;
+        document.getElementById('gasUrl').value = currentGasUrl;
+        alert('URL이 변경되었습니다.');
+      }
+    });
+
+    let currentTimeOptions = [];
+    let currentUniversityList = [];
+
+    function renderUniversityList() {
+      const container = document.getElementById('universityListContainer');
+      container.innerHTML = '';
+
+      currentUniversityList.forEach((university, index) => {
+        const univDiv = document.createElement('div');
+        univDiv.className = 'flex items-center space-x-3 p-3 bg-gray-50 rounded-lg';
+        univDiv.innerHTML = `
+          <input type="text" value="${university}" class="admin-input flex-1" data-index="${index}">
+          <button class="admin-btn-danger px-3 py-1 text-sm" onclick="removeUniversity(${index})">
+            <i class="fas fa-trash"></i>
+          </button>
+        `;
+        container.appendChild(univDiv);
+      });
+
+      // 대학 목록 변경 이벤트 리스너 추가
+      container.querySelectorAll('input[data-index]').forEach(input => {
+        input.addEventListener('input', (e) => {
+          const index = parseInt(e.target.dataset.index);
+          currentUniversityList[index] = e.target.value;
+        });
+      });
+    }
+
+    function renderTimeOptions() {
+      const container = document.getElementById('timeOptionsContainer');
+      container.innerHTML = '';
+
+      currentTimeOptions.forEach((option, index) => {
+        const optionDiv = document.createElement('div');
+        optionDiv.className = 'flex items-center space-x-3 p-3 bg-gray-50 rounded-lg';
+        optionDiv.innerHTML = `
+          <input type="text" value="${option.emoji}" class="admin-input w-12 text-center" maxlength="2" data-index="${index}" data-field="emoji">
+          <input type="text" value="${option.label}" class="admin-input flex-1" data-index="${index}" data-field="label">
+          <input type="text" value="${option.description}" class="admin-input flex-1" data-index="${index}" data-field="description">
+          <button class="admin-btn-danger px-3 py-1 text-sm" onclick="removeTimeOption(${index})">
+            <i class="fas fa-trash"></i>
+          </button>
+        `;
+        container.appendChild(optionDiv);
+      });
+
+      // 시간 옵션 변경 이벤트 리스너 추가
+      container.querySelectorAll('input[data-index]').forEach(input => {
+        input.addEventListener('input', (e) => {
+          const index = parseInt(e.target.dataset.index);
+          const field = e.target.dataset.field;
+          currentTimeOptions[index][field] = e.target.value;
+          renderUnavailableTimes();
+        });
+      });
+    }
+
+    function renderUnavailableTimes() {
+      const container = document.getElementById('unavailableTimesContainer');
+      container.innerHTML = '';
+
+      currentTimeOptions.forEach(option => {
+        const label = document.createElement('label');
+        label.className = 'flex items-center space-x-3 cursor-pointer group';
+        label.innerHTML = `
+          <input type="checkbox" id="unavailable${option.id}" class="admin-input w-5 h-5">
+          <div class="flex items-center">
+            <span class="text-lg mr-2">${option.emoji}</span>
+            <span class="font-medium">${option.label}</span>
+          </div>
+        `;
+        container.appendChild(label);
+      });
+    }
+
+    function addTimeOption() {
+      const newId = Date.now().toString().slice(-4); // 간단한 ID 생성
+      currentTimeOptions.push({
+        id: newId,
+        emoji: '🕐',
+        label: '새 시간',
+        description: '불가능'
+      });
+      renderTimeOptions();
+      renderUnavailableTimes();
+    }
+
+    function removeTimeOption(index) {
+      if (currentTimeOptions.length > 1) {
+        currentTimeOptions.splice(index, 1);
+        renderTimeOptions();
+        renderUnavailableTimes();
+      } else {
+        alert('최소 1개의 시간 옵션이 필요합니다.');
+      }
+    }
+
+    function addUniversity() {
+      currentUniversityList.push('새 대학');
+      renderUniversityList();
+    }
+
+    function removeUniversity(index) {
+      if (currentUniversityList.length > 1) {
+        currentUniversityList.splice(index, 1);
+        renderUniversityList();
+      } else {
+        alert('최소 1개의 대학이 필요합니다.');
+      }
+    }
+
+    // 전역 함수로 등록
+    window.addTimeOption = addTimeOption;
+    window.removeTimeOption = removeTimeOption;
+    window.addUniversity = addUniversity;
+    window.removeUniversity = removeUniversity;
+
+    document.getElementById('btnLoadSettings').addEventListener('click', async () => {
+      try {
+        const res = await fetch(currentGasUrl + '?apiKey=' + encodeURIComponent(currentApiKey));
+        const data = await res.json();
+
+        if (data.settings) {
+          document.getElementById('voteStartDate').value = data.settings.voteStartDate || '';
+          document.getElementById('voteEndDate').value = data.settings.voteEndDate || '';
+          document.getElementById('voteStartTime').value = data.settings.voteStartTime || '';
+          document.getElementById('voteEndTime').value = data.settings.voteEndTime || '';
+          document.getElementById('votingTitle').value = data.settings.votingTitle || '';
+          document.getElementById('votingDescription').value = data.settings.votingDescription || '';
+          document.getElementById('allowAllAvailable').checked = data.settings.allowAllAvailable || false;
+
+          // 시간 옵션 불러오기
+          if (data.settings.timeOptions && data.settings.timeOptions.length > 0) {
+            currentTimeOptions = data.settings.timeOptions;
+          } else {
+            // 기본값 설정
+            currentTimeOptions = [
+              { id: '9', emoji: '🕘', label: '9시', description: '불가능' },
+              { id: '10', emoji: '🕙', label: '10시', description: '불가능' },
+              { id: '11', emoji: '🕚', label: '11시', description: '불가능' },
+              { id: '12', emoji: '🕛', label: '12시', description: '불가능' }
+            ];
+          }
+
+          // 대학 목록 불러오기
+          if (data.settings.universityList && data.settings.universityList.length > 0) {
+            currentUniversityList = data.settings.universityList;
+          } else {
+            // 기본값 설정
+            currentUniversityList = [
+              "가톨릭대학교", "가톨릭관동대학교", "가톨릭꽃동네대학교",
+              "가톨릭상지대학교", "대구가톨릭대학교", "목포가톨릭대학교",
+              "부산가톨릭대학교", "서강대학교", "인천가톨릭대학교", "기타(직접입력)"
+            ];
+          }
+
+          renderTimeOptions();
+          renderUnavailableTimes();
+          renderUniversityList();
+
+          // 시간 불가 설정 불러오기 (동적 처리)
+          setTimeout(() => {
+            if (data.settings.unavailableTimes) {
+              currentTimeOptions.forEach(option => {
+                const checkbox = document.getElementById(`unavailable${option.id}`);
+                if (checkbox) {
+                  // 동적으로 생성된 프로퍼티 키에서 값 가져오기
+                  checkbox.checked = data.settings.unavailableTimes[`unavailable${option.id}`] || false;
+                }
+              });
+            }
+          }, 100);
+
+          alert('설정을 불러왔습니다.');
+        }
+      } catch (err) {
+        alert('설정 불러오기 실패: ' + (err.message || '오류'));
+      }
+    });
+
+    document.getElementById('btnUpdateSettings').addEventListener('click', async () => {
+      // 동적 unavailableTimes 생성 (시간 옵션 ID 기반)
+      const unavailableTimes = {};
+      currentTimeOptions.forEach(option => {
+        const checkbox = document.getElementById(`unavailable${option.id}`);
+        if (checkbox) {
+          unavailableTimes[`unavailable${option.id}`] = checkbox.checked;
+        }
+      });
+
+      const settings = {
+        voteStartDate: document.getElementById('voteStartDate').value,
+        voteEndDate: document.getElementById('voteEndDate').value,
+        voteStartTime: document.getElementById('voteStartTime').value,
+        voteEndTime: document.getElementById('voteEndTime').value,
+        votingTitle: document.getElementById('votingTitle').value,
+        votingDescription: document.getElementById('votingDescription').value,
+        timeOptions: currentTimeOptions,
+        allowAllAvailable: document.getElementById('allowAllAvailable').checked,
+        universityList: currentUniversityList,
+        unavailableTimes: unavailableTimes
+      };
+
+      try {
+        const res = await fetch(currentGasUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            action: 'update_settings',
+            apiKey: currentApiKey,
+            settings: settings
+          })
+        });
+        const result = await res.json();
+        alert(result.ok ? '설정이 저장되었습니다.' : ('저장 실패: ' + (result.message || '오류')));
+      } catch (err) {
+        alert('설정 저장 실패: ' + (err.message || '오류'));
+      }
+    });
+
+    // 시간 옵션 추가 버튼 이벤트
+    document.getElementById('addTimeOption').addEventListener('click', addTimeOption);
+
+    // 대학 추가 버튼 이벤트
+    document.getElementById('addUniversity').addEventListener('click', addUniversity);
+
+    // 초기 렌더링
+    renderTimeOptions();
+    renderUnavailableTimes();
+    renderUniversityList();
+
+    document.getElementById('btnCsv').addEventListener('click', () => {
+      window.open(currentGasUrl + '?format=csv&apiKey=' + encodeURIComponent(currentApiKey), '_blank');
+    });
+
+    document.getElementById('btnClear').addEventListener('click', async () => {
+      if (!confirm('정말로 모든 투표 데이터를 삭제하시겠습니까?\n이 작업은 되돌릴 수 없습니다.')) return;
+
+      try {
+        const res = await fetch(currentGasUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            action: 'clear',
+            apiKey: currentApiKey
+          })
+        });
+        const result = await res.json();
+        alert(result.ok ? '투표 데이터가 초기화되었습니다.' : ('초기화 실패: ' + (result.message || '오류')));
+      } catch (err) {
+        alert('초기화 실패: ' + (err.message || '오류'));
+      }
+    });
+
+    document.getElementById('btnLogout').addEventListener('click', () => {
+      if (confirm('로그아웃하시겠습니까?')) {
+        showAuthSection();
+      }
+    });
+
+    // Enter 키로 인증
+    document.getElementById('apiKey').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') authenticate();
+    });
+    document.getElementById('gasUrl').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') authenticate();
+    });
+  </script>
+</body>
+</html>

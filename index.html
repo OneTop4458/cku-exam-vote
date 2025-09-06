@@ -7,81 +7,325 @@
   <title>토요일 시험 시간 투표</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <meta name="color-scheme" content="light only" />
   <style>
+    * { font-family: 'Noto Sans KR', sans-serif; }
     .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0}
-    .univ-selected{outline:2px solid #2563eb;background:#dbeafe}
+
+    /* 현대적인 색상 스키마 */
+    .gradient-bg { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+    .gradient-card { background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); }
+    .glass-effect { backdrop-filter: blur(10px); background: rgba(255, 255, 255, 0.9); }
+
+    /* 개선된 버튼 스타일 */
+    .btn-primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+      transition: all 0.3s ease;
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+    }
+
+    .btn-secondary {
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      box-shadow: 0 4px 15px rgba(245, 87, 108, 0.4);
+      transition: all 0.3s ease;
+    }
+    .btn-secondary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(245, 87, 108, 0.6);
+    }
+
+    /* 개선된 카드 디자인 */
+    .card-modern {
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      transition: all 0.3s ease;
+    }
+    .card-modern:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    }
+
+    /* 개선된 상태바 */
+    .status-modern {
+      border-radius: 12px;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      animation: slideIn 0.3s ease-out;
+    }
+
+    /* 개선된 대학 선택 버튼 */
+    .univ-btn-modern {
+      border-radius: 12px;
+      transition: all 0.3s ease;
+      border: 2px solid transparent;
+      background: white;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+    .univ-btn-modern:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+    }
+    .univ-selected {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+      color: white !important;
+      border-color: transparent !important;
+      transform: scale(1.05);
+    }
+
+    /* 개선된 체크박스 */
+    .checkbox-modern {
+      position: relative;
+      appearance: none;
+      width: 20px;
+      height: 20px;
+      border-radius: 6px;
+      border: 2px solid #e2e8f0;
+      background: white;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+    .checkbox-modern:checked {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-color: transparent;
+      box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.2);
+    }
+    .checkbox-modern:checked::after {
+      content: '✓';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: white;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    /* 개선된 입력 필드 */
+    .input-modern {
+      border-radius: 12px;
+      border: 2px solid #e2e8f0;
+      transition: all 0.3s ease;
+      background: rgba(255, 255, 255, 0.9);
+    }
+    .input-modern:focus {
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+      background: white;
+    }
+
+    /* 스피너 애니메이션 */
+    .spin{animation:spin 1s linear infinite}
+    @keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+
+    /* 슬라이드 인 애니메이션 */
+    @keyframes slideIn {
+      from { transform: translateY(-10px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    /* 펄스 애니메이션 */
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+    .pulse { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+
+    /* 개선된 통계 카드 */
+    .stat-card {
+      background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.7) 100%);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.3);
+      border-radius: 16px;
+      transition: all 0.3s ease;
+    }
+    .stat-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    /* 개선된 테이블 */
+    .table-modern {
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    }
+    .table-modern thead {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+    .table-modern tbody tr {
+      transition: all 0.2s ease;
+    }
+    .table-modern tbody tr:hover {
+      background: rgba(102, 126, 234, 0.05);
+      transform: scale(1.01);
+    }
   </style>
 </head>
-<body class="bg-gray-100 min-h-screen py-8">
-  <div class="max-w-5xl mx-auto px-4">
-    <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
-      <h1 class="text-2xl font-bold text-center text-gray-800 mb-2">시험 시간 투표</h1>
-      <p class="text-center text-gray-600 mb-6">토요일에 <b>불가능한 시간만</b> 체크해주세요.</p>
+<body class="gradient-bg min-h-screen py-8">
+  <div class="max-w-6xl mx-auto px-4">
+    <!-- 상태바 -->
+    <div id="statusBar" class="hidden mb-6 status-modern px-6 py-4 text-sm font-medium"
+         role="status" aria-live="polite">
+      <div class="flex items-center">
+        <i class="fas fa-info-circle mr-3 text-lg"></i>
+        <span id="statusContent"></span>
+      </div>
+    </div>
+
+    <!-- 메인 투표 카드 -->
+    <div class="card-modern p-8 mb-8">
+      <!-- 헤더 섹션 -->
+      <div class="text-center mb-8">
+        <div class="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full mb-6 shadow-lg">
+          <i class="fas fa-vote-yea text-3xl text-white"></i>
+        </div>
+        <h1 id="votingTitleDisplay" class="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-3">
+          시험 시간 투표
+        </h1>
+        <p id="votingDescriptionDisplay" class="text-lg text-gray-600 mb-4">
+          토요일에 <span class="font-semibold text-red-500">불가능한 시간만</span> 체크해주세요
+        </p>
+        <div id="votePeriod" class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-green-400 to-blue-500 rounded-full text-white text-sm font-medium shadow-lg hidden">
+          <i class="fas fa-calendar-alt mr-2"></i>
+          투표 기간: <span id="votePeriodText"></span>
+        </div>
+      </div>
 
       <!-- 반드시 서버 URL만 사용 -->
       <script>
-        // 여기에 Apps Script 웹앱 URL(끝이 /exec)만 입력하세요.
-        const GAS_URL = window.GAS_URL || "PASTE_YOUR_APPS_SCRIPT_WEBAPP_URL_HERE";
+        const GAS_URL = window.GAS_URL || "YOUR_GAS_URL";
         if (!/^https?:\/\//.test(GAS_URL)) {
           alert("서버 URL이 설정되지 않았습니다. index.html 상단의 GAS_URL을 설정해주세요.");
         }
       </script>
 
-      <form id="voteForm" class="space-y-6" autocomplete="on" novalidate>
-        <!-- 순번: 서버에서 자동 할당 -->
+      <form id="voteForm" class="space-y-8" autocomplete="on" novalidate>
         <input type="hidden" id="number" name="number" />
 
-        <!-- 소속 대학 -->
-        <section id="step1">
-          <div class="mb-2 font-medium text-gray-800">소속 대학을 선택하세요.</div>
-          <div id="univButtons" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2"></div>
-          <div id="customUnivWrap" class="mt-2 hidden">
-            <label for="customUniv" class="block text-sm text-gray-700 mb-1">기타(직접입력)</label>
-            <input type="text" id="customUniv" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500" placeholder="소속 대학을 입력하세요" />
+        <!-- 소속 대학 섹션 -->
+        <section class="bg-gradient-to-br from-blue-50 to-indigo-50 p-6 rounded-2xl border border-blue-100">
+          <div class="flex items-center mb-4">
+            <i class="fas fa-university text-blue-600 mr-3 text-xl"></i>
+            <h3 class="text-xl font-semibold text-gray-800">소속 대학 선택</h3>
+          </div>
+          <div id="univButtons" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 mb-4"></div>
+          <div id="customUnivWrap" class="mt-4 hidden">
+            <label for="customUniv" class="block text-sm font-medium text-gray-700 mb-2">
+              <i class="fas fa-plus-circle mr-2 text-blue-500"></i>기타(직접입력)
+            </label>
+            <input type="text" id="customUniv" class="input-modern w-full px-4 py-3 text-gray-700 placeholder-gray-400" placeholder="소속 대학을 입력하세요" />
           </div>
           <input type="hidden" id="school" name="school" required />
-          <p class="text-xs text-gray-500 mt-1">※ 반드시 위 버튼에서 선택하거나 '기타'를 입력해야 합니다.</p>
+          <p class="text-sm text-blue-600 mt-3 flex items-center">
+            <i class="fas fa-info-circle mr-2"></i>
+            반드시 위 버튼에서 선택하거나 '기타'를 입력해야 합니다
+          </p>
         </section>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div>
-            <label for="name" class="block text-sm font-medium text-gray-700 mb-1">성명</label>
-            <input type="text" id="name" name="name" required pattern="^[가-힣a-zA-Z\s]{2,30}$" title="2~30자 한글/영문으로 입력" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500" />
+        <!-- 개인 정보 입력 섹션 -->
+        <section class="bg-gradient-to-br from-purple-50 to-pink-50 p-6 rounded-2xl border border-purple-100">
+          <div class="flex items-center mb-4">
+            <i class="fas fa-user text-purple-600 mr-3 text-xl"></i>
+            <h3 class="text-xl font-semibold text-gray-800">개인 정보 입력</h3>
           </div>
-          <div>
-            <label for="studentId" class="block text-sm font-medium text-gray-700 mb-1">학번</label>
-            <input type="text" id="studentId" name="studentId" required pattern="^[A-Za-z0-9-_]{5,20}$" title="5~20자, 영문/숫자/-/_ 사용 가능" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500" />
-            <p class="text-xs text-gray-500 mt-1">※ 재투표 방지용으로 사용됩니다.</p>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="space-y-2">
+              <label for="name" class="block text-sm font-medium text-gray-700 flex items-center">
+                <i class="fas fa-signature mr-2 text-purple-500"></i>성명
+              </label>
+              <input type="text" id="name" name="name" required pattern="^[가-힣a-zA-Z\s]{2,30}$" title="2~30자 한글/영문으로 입력"
+                     class="input-modern w-full px-4 py-3 text-gray-700 placeholder-gray-400" placeholder="성명을 입력하세요" />
+            </div>
+            <div class="space-y-2">
+              <label for="studentId" class="block text-sm font-medium text-gray-700 flex items-center">
+                <i class="fas fa-id-card mr-2 text-purple-500"></i>학번
+              </label>
+              <input type="text" id="studentId" name="studentId" required pattern="^[A-Za-z0-9-_]{5,20}$" title="5~20자, 영문/숫자/-/_ 사용 가능"
+                     class="input-modern w-full px-4 py-3 text-gray-700 placeholder-gray-400" placeholder="학번을 입력하세요" />
+              <p class="text-sm text-purple-600 flex items-center mt-2">
+                <i class="fas fa-shield-alt mr-2"></i>
+                재투표 방지용으로 사용됩니다
+              </p>
+            </div>
           </div>
-        </div>
+        </section>
 
-        <fieldset class="bg-red-50 p-4 rounded-md">
-          <legend class="text-lg font-medium text-gray-800 mb-3">토요일 불가능한 시간</legend>
-          <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-            <label class="flex items-center space-x-2 cursor-pointer">
-              <input type="checkbox" name="time" value="9" class="form-checkbox h-5 w-5 text-red-600" />
-              <span class="text-sm">9시 불가능</span>
+        <!-- 시간 선택 섹션 -->
+        <section class="bg-gradient-to-br from-red-50 to-orange-50 p-6 rounded-2xl border border-red-100">
+          <div class="flex items-center mb-4">
+            <i class="fas fa-clock text-red-600 mr-3 text-xl"></i>
+            <h3 id="timeSectionTitle" class="text-xl font-semibold text-gray-800">토요일 불가능한 시간</h3>
+          </div>
+          <div id="timeOptionsGrid" class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <label class="group cursor-pointer">
+              <div class="bg-white p-4 rounded-xl border-2 border-gray-200 hover:border-red-300 transition-all duration-300 shadow-sm hover:shadow-md">
+                <div class="flex items-center justify-between mb-2">
+                  <input type="checkbox" name="time" value="9" class="checkbox-modern" />
+                  <span class="text-2xl">🕘</span>
+                </div>
+                <div class="text-center">
+                  <div class="text-lg font-semibold text-gray-800">9시</div>
+                  <div class="text-sm text-gray-500">불가능</div>
+                </div>
+              </div>
             </label>
-            <label class="flex items-center space-x-2 cursor-pointer">
-              <input type="checkbox" name="time" value="10" class="form-checkbox h-5 w-5 text-red-600" />
-              <span class="text-sm">10시 불가능</span>
+            <label class="group cursor-pointer">
+              <div class="bg-white p-4 rounded-xl border-2 border-gray-200 hover:border-red-300 transition-all duration-300 shadow-sm hover:shadow-md">
+                <div class="flex items-center justify-between mb-2">
+                  <input type="checkbox" name="time" value="10" class="checkbox-modern" />
+                  <span class="text-2xl">🕙</span>
+                </div>
+                <div class="text-center">
+                  <div class="text-lg font-semibold text-gray-800">10시</div>
+                  <div class="text-sm text-gray-500">불가능</div>
+                </div>
+              </div>
             </label>
-            <label class="flex items-center space-x-2 cursor-pointer">
-              <input type="checkbox" name="time" value="11" class="form-checkbox h-5 w-5 text-red-600" />
-              <span class="text-sm">11시 불가능</span>
+            <label class="group cursor-pointer">
+              <div class="bg-white p-4 rounded-xl border-2 border-gray-200 hover:border-red-300 transition-all duration-300 shadow-sm hover:shadow-md">
+                <div class="flex items-center justify-between mb-2">
+                  <input type="checkbox" name="time" value="11" class="checkbox-modern" />
+                  <span class="text-2xl">🕚</span>
+                </div>
+                <div class="text-center">
+                  <div class="text-lg font-semibold text-gray-800">11시</div>
+                  <div class="text-sm text-gray-500">불가능</div>
+                </div>
+              </div>
             </label>
-            <label class="flex items-center space-x-2 cursor-pointer">
-              <input type="checkbox" name="time" value="12" class="form-checkbox h-5 w-5 text-red-600" />
-              <span class="text-sm">12시 불가능</span>
+            <label class="group cursor-pointer">
+              <div class="bg-white p-4 rounded-xl border-2 border-gray-200 hover:border-red-300 transition-all duration-300 shadow-sm hover:shadow-md">
+                <div class="flex items-center justify-between mb-2">
+                  <input type="checkbox" name="time" value="12" class="checkbox-modern" />
+                  <span class="text-2xl">🕛</span>
+                </div>
+                <div class="text-center">
+                  <div class="text-lg font-semibold text-gray-800">12시</div>
+                  <div class="text-sm text-gray-500">불가능</div>
+                </div>
+              </div>
             </label>
           </div>
-          <p class="text-xs text-gray-500 mt-2">※ 최소 1개 이상 선택해주세요.</p>
-        </fieldset>
+          <p class="text-sm text-red-600 mt-4 flex items-center">
+            <i class="fas fa-exclamation-triangle mr-2"></i>
+            최소 1개 이상 선택해주세요
+          </p>
+        </section>
 
-        <div class="text-center">
-          <button id="submitBtn" type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-6 rounded-md transition duration-300 disabled:opacity-50 disabled:cursor-not-allowed">
-            <i class="fas fa-vote-yea mr-2"></i>투표하기
+        <!-- 투표하기 버튼 -->
+        <div class="text-center pt-4">
+          <button id="submitBtn" type="submit" class="btn-primary text-white font-bold py-4 px-12 rounded-2xl text-lg shadow-xl disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none">
+            <i class="fas fa-vote-yea mr-3 text-xl"></i>
+            투표하기
+            <i class="fas fa-arrow-right ml-3 text-xl"></i>
           </button>
         </div>
 
@@ -89,111 +333,339 @@
       </form>
     </div>
 
-    <div class="bg-white rounded-lg shadow-lg p-6">
-      <div class="flex justify-between items-center mb-4">
-        <h2 class="text-xl font-bold text-gray-800">투표 현황</h2>
-        <div class="space-x-2">
-          <button id="downloadBtn" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md text-sm transition duration-300" title="마스킹된 CSV 내려받기">
-            <i class="fas fa-download mr-1"></i>CSV 다운로드(마스킹)
-          </button>
+    <!-- 투표 현황 카드 -->
+    <div class="card-modern p-8">
+      <div class="flex justify-between items-center mb-8">
+        <div class="flex items-center">
+          <i class="fas fa-chart-bar text-blue-600 mr-3 text-2xl"></i>
+          <h2 class="text-2xl font-bold text-gray-800">실시간 투표 현황</h2>
+        </div>
+        <button id="adminBtn" class="btn-secondary text-white px-6 py-3 rounded-xl text-sm font-medium shadow-lg" title="관리자 페이지로 이동">
+          <i class="fas fa-cog mr-2"></i>관리자
+        </button>
+      </div>
+
+      <!-- 대시보드 통계 카드들 -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+        <!-- 총 투표수 카드 -->
+        <div class="stat-card p-6 text-center group col-span-1 md:col-span-2 lg:col-span-1">
+          <div class="relative">
+            <div class="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full mb-4 shadow-lg">
+              <i class="fas fa-users text-3xl text-white"></i>
+            </div>
+            <div class="absolute -top-2 -right-2 bg-gradient-to-r from-pink-500 to-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
+              실시간
+            </div>
+          </div>
+          <div class="text-4xl font-bold text-blue-600 mb-2" id="totalCount">0</div>
+          <div class="text-sm font-medium text-gray-600 mb-3">총 투표 참여자</div>
+          <div class="w-full bg-blue-100 rounded-full h-2">
+            <div class="bg-gradient-to-r from-blue-500 to-blue-600 h-2 rounded-full transition-all duration-1000 ease-out" id="totalProgress" style="width: 0%"></div>
+          </div>
+        </div>
+
+        <!-- 시간대별 투표 현황 -->
+        <div class="stat-card p-6 group col-span-1 md:col-span-2 lg:col-span-2">
+          <h4 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+            <i class="fas fa-clock mr-2 text-purple-600"></i>
+            시간대별 투표 현황
+          </h4>
+          <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="text-center">
+              <div class="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-br from-orange-400 to-orange-600 rounded-xl mb-2 shadow-md">
+                <span class="text-lg">🕘</span>
+              </div>
+              <div class="text-xl font-bold text-orange-600" id="time9Count">0</div>
+              <div class="text-xs text-gray-500">9시 불가</div>
+            </div>
+            <div class="text-center">
+              <div class="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-br from-red-400 to-red-600 rounded-xl mb-2 shadow-md">
+                <span class="text-lg">🕙</span>
+              </div>
+              <div class="text-xl font-bold text-red-600" id="time10Count">0</div>
+              <div class="text-xs text-gray-500">10시 불가</div>
+            </div>
+            <div class="text-center">
+              <div class="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-br from-pink-400 to-pink-600 rounded-xl mb-2 shadow-md">
+                <span class="text-lg">🕚</span>
+              </div>
+              <div class="text-xl font-bold text-pink-600" id="time11Count">0</div>
+              <div class="text-xs text-gray-500">11시 불가</div>
+            </div>
+            <div class="text-center">
+              <div class="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-br from-purple-400 to-purple-600 rounded-xl mb-2 shadow-md">
+                <span class="text-lg">🕛</span>
+              </div>
+              <div class="text-xl font-bold text-purple-600" id="time12Count">0</div>
+              <div class="text-xs text-gray-500">12시 불가</div>
+            </div>
+          </div>
+
+          <!-- 미니 차트 -->
+          <div class="mt-4 pt-4 border-t border-gray-200">
+            <div class="flex items-end justify-between h-16 px-2">
+              <div class="flex flex-col items-center">
+                <div class="w-3 bg-orange-400 rounded-t mb-1 transition-all duration-1000" id="bar9" style="height: 0%"></div>
+                <span class="text-xs text-gray-500">9시</span>
+              </div>
+              <div class="flex flex-col items-center">
+                <div class="w-3 bg-red-400 rounded-t mb-1 transition-all duration-1000" id="bar10" style="height: 0%"></div>
+                <span class="text-xs text-gray-500">10시</span>
+              </div>
+              <div class="flex flex-col items-center">
+                <div class="w-3 bg-pink-400 rounded-t mb-1 transition-all duration-1000" id="bar11" style="height: 0%"></div>
+                <span class="text-xs text-gray-500">11시</span>
+              </div>
+              <div class="flex flex-col items-center">
+                <div class="w-3 bg-purple-400 rounded-t mb-1 transition-all duration-1000" id="bar12" style="height: 0%"></div>
+                <span class="text-xs text-gray-500">12시</span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
-      <div class="mb-4 grid grid-cols-2 md:grid-cols-5 gap-2 text-center">
-        <div class="bg-blue-100 p-3 rounded">
-          <div class="text-2xl font-bold text-blue-600" id="totalCount">0</div>
-          <div class="text-sm text-gray-600">총 투표수</div>
+      <!-- 최근 활동 및 추가 인사이트 -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+        <!-- 참여율 카드 -->
+        <div class="stat-card p-6">
+          <div class="flex items-center justify-between mb-4">
+            <h4 class="text-lg font-semibold text-gray-800">참여율</h4>
+            <i class="fas fa-chart-pie text-green-600"></i>
+          </div>
+          <div class="relative w-24 h-24 mx-auto mb-4">
+            <svg class="w-24 h-24 transform -rotate-90" viewBox="0 0 100 100">
+              <circle cx="50" cy="50" r="40" stroke="#e5e7eb" stroke-width="8" fill="none"/>
+              <circle cx="50" cy="50" r="40" stroke="url(#participationGradient)" stroke-width="8" fill="none"
+                      stroke-dasharray="251.2" stroke-dashoffset="0" id="participationCircle"/>
+            </svg>
+            <defs>
+              <linearGradient id="participationGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#10b981"/>
+                <stop offset="100%" stop-color="#059669"/>
+              </linearGradient>
+            </defs>
+            <div class="absolute inset-0 flex items-center justify-center">
+              <span class="text-lg font-bold text-green-600" id="participationPercent">0%</span>
+            </div>
+          </div>
+          <p class="text-sm text-gray-600 text-center">총 참여율</p>
         </div>
-        <div class="bg-red-100 p-3 rounded">
-          <div class="text-2xl font-bold text-red-600" id="time9Count">0</div>
-          <div class="text-sm text-gray-600">9시 불가</div>
+
+        <!-- 인기 시간대 -->
+        <div class="stat-card p-6">
+          <div class="flex items-center justify-between mb-4">
+            <h4 class="text-lg font-semibold text-gray-800">인기 시간대</h4>
+            <i class="fas fa-star text-yellow-600"></i>
+          </div>
+          <div class="text-center">
+            <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-full mb-3">
+              <span class="text-2xl" id="popularTimeEmoji">🕘</span>
+            </div>
+            <div class="text-xl font-bold text-gray-800 mb-1" id="popularTime">9시</div>
+            <div class="text-sm text-gray-600">가장 선호되는 시간</div>
+          </div>
         </div>
-        <div class="bg-red-100 p-3 rounded">
-          <div class="text-2xl font-bold text-red-600" id="time10Count">0</div>
-          <div class="text-sm text-gray-600">10시 불가</div>
-        </div>
-        <div class="bg-red-100 p-3 rounded">
-          <div class="text-2xl font-bold text-red-600" id="time11Count">0</div>
-          <div class="text-sm text-gray-600">11시 불가</div>
-        </div>
-        <div class="bg-red-100 p-3 rounded">
-          <div class="text-2xl font-bold text-red-600" id="time12Count">0</div>
-          <div class="text-sm text-gray-600">12시 불가</div>
+
+        <!-- 최근 투표 -->
+        <div class="stat-card p-6">
+          <div class="flex items-center justify-between mb-4">
+            <h4 class="text-lg font-semibold text-gray-800">최근 활동</h4>
+            <i class="fas fa-history text-blue-600"></i>
+          </div>
+          <div class="space-y-2">
+            <div class="flex items-center justify-between text-sm">
+              <span class="text-gray-600">오늘 투표</span>
+              <span class="font-semibold text-blue-600" id="todayVotes">0</span>
+            </div>
+            <div class="flex items-center justify-between text-sm">
+              <span class="text-gray-600">이번주 투표</span>
+              <span class="font-semibold text-blue-600" id="weekVotes">0</span>
+            </div>
+            <div class="flex items-center justify-between text-sm">
+              <span class="text-gray-600">평균 투표율</span>
+              <span class="font-semibold text-green-600" id="avgParticipation">0%</span>
+            </div>
+          </div>
         </div>
       </div>
 
+      <!-- 투표자 명단 테이블 -->
       <div class="overflow-x-auto">
-        <table class="w-full table-auto border-collapse border border-gray-300">
+        <table class="table-modern w-full">
           <thead>
-            <tr class="bg-gray-50">
-              <th class="border border-gray-300 px-3 py-2 text-left">순번</th>
-              <th class="border border-gray-300 px-3 py-2 text-left">소속학교</th>
-              <th class="border border-gray-300 px-3 py-2 text-left">성명</th>
-              <th class="border border-gray-300 px-3 py-2 text-left">학번</th>
-              <th class="border border-gray-300 px-3 py-2 text-center">9시</th>
-              <th class="border border-gray-300 px-3 py-2 text-center">10시</th>
-              <th class="border border-gray-300 px-3 py-2 text-center">11시</th>
-              <th class="border border-gray-300 px-3 py-2 text-center">12시</th>
+            <tr>
+              <th class="px-6 py-4 text-left font-semibold">
+                <i class="fas fa-hashtag mr-2 text-blue-600"></i>순번
+              </th>
+              <th class="px-6 py-4 text-left font-semibold">
+                <i class="fas fa-university mr-2 text-blue-600"></i>소속학교
+              </th>
+              <th class="px-6 py-4 text-left font-semibold">
+                <i class="fas fa-user mr-2 text-blue-600"></i>성명
+              </th>
+              <th class="px-6 py-4 text-left font-semibold">
+                <i class="fas fa-id-card mr-2 text-blue-600"></i>학번
+              </th>
+              <th class="px-6 py-4 text-center font-semibold">9시</th>
+              <th class="px-6 py-4 text-center font-semibold">10시</th>
+              <th class="px-6 py-4 text-center font-semibold">11시</th>
+              <th class="px-6 py-4 text-center font-semibold">12시</th>
             </tr>
           </thead>
-          <tbody id="voteTable"></tbody>
+          <tbody id="voteTable" class="divide-y divide-gray-200"></tbody>
         </table>
       </div>
     </div>
   </div>
 
   <script>
-    const UNIVS = ["가톨릭대학교","가톨릭관동대학교","가톨릭꽃동네대학교","가톨릭상지대학교","대구가톨릭대학교","목포가톨릭대학교","부산가톨릭대학교","서강대학교","인천가톨릭대학교","기타(직접입력)"];
+    // ---- 상태바 유틸 ----
+    const statusBar = document.getElementById('statusBar');
+    const statusContent = document.getElementById('statusContent');
+    function showStatus(msg, kind='info'){
+      const styles = {
+        info:  'bg-gradient-to-r from-blue-400 to-blue-600 text-white border-blue-300',
+        ok:    'bg-gradient-to-r from-green-400 to-green-600 text-white border-green-300',
+        warn:  'bg-gradient-to-r from-yellow-400 to-yellow-600 text-white border-yellow-300',
+        err:   'bg-gradient-to-r from-red-400 to-red-600 text-white border-red-300'
+      };
+      const icons = {
+        info:  'fas fa-info-circle',
+        ok:    'fas fa-check-circle',
+        warn:  'fas fa-exclamation-triangle',
+        err:   'fas fa-times-circle'
+      };
+      statusBar.className = `status-modern mb-6 px-6 py-4 text-sm font-medium ${styles[kind]||styles.info}`;
+      statusContent.innerHTML = msg;
+      statusBar.classList.remove('hidden');
+    }
+    function hideStatus(){ statusBar.classList.add('hidden'); }
+
     const univButtons = document.getElementById("univButtons");
     const schoolHidden = document.getElementById("school");
     const customWrap = document.getElementById("customUnivWrap");
     const customInput = document.getElementById("customUniv");
 
-    // Render univ buttons
-    UNIVS.forEach(u=>{
-      const btn=document.createElement('button');
-      btn.type='button';
-      btn.className='bg-gray-100 hover:bg-gray-200 rounded px-3 py-2 text-sm';
-      btn.textContent=u;
-      btn.addEventListener('click',()=>{
-        [...univButtons.querySelectorAll('button')].forEach(b=>b.classList.remove('univ-selected'));
-        btn.classList.add('univ-selected');
-        if(u.includes('기타')) {
-          customWrap.classList.remove('hidden');
-          customInput.focus();
-          schoolHidden.value = '';
-        } else {
-          customWrap.classList.add('hidden');
-          customInput.value='';
-          schoolHidden.value = u;
-        }
+    function renderUniversityButtons() {
+      univButtons.innerHTML = ''; // 기존 버튼들 제거
+      currentUniversityList.forEach(u=>{
+        const btn=document.createElement('button');
+        btn.type='button';
+        btn.className='univ-btn-modern px-4 py-3 text-sm font-medium text-gray-700';
+        btn.innerHTML = u.includes('기타')
+          ? '<i class="fas fa-plus mr-2"></i>' + u
+          : '<i class="fas fa-university mr-2"></i>' + u;
+        btn.addEventListener('click',()=>{
+          [...univButtons.querySelectorAll('button')].forEach(b=>{
+            b.classList.remove('univ-selected');
+            b.innerHTML = b.textContent.includes('기타')
+              ? '<i class="fas fa-plus mr-2"></i>' + b.textContent.replace('<i class="fas fa-plus mr-2"></i>', '').replace('<i class="fas fa-university mr-2"></i>', '')
+              : '<i class="fas fa-university mr-2"></i>' + b.textContent.replace('<i class="fas fa-plus mr-2"></i>', '').replace('<i class="fas fa-university mr-2"></i>', '');
+          });
+          btn.classList.add('univ-selected');
+          if(u.includes('기타')) {
+            customWrap.classList.remove('hidden');
+            customInput.focus();
+            schoolHidden.value = '';
+            btn.innerHTML = '<i class="fas fa-plus mr-2"></i>' + u;
+          } else {
+            customWrap.classList.add('hidden');
+            customInput.value='';
+            schoolHidden.value = u;
+            btn.innerHTML = '<i class="fas fa-university mr-2"></i>' + u;
+          }
+        });
+        univButtons.appendChild(btn);
       });
-      univButtons.appendChild(btn);
-    });
-    customInput.addEventListener('input',()=>{
-      schoolHidden.value = customInput.value.trim();
-    });
+    }
+    customInput.addEventListener('input',()=>{ schoolHidden.value = customInput.value.trim(); });
 
     let votes = [];
     async function fetchVotes() {
-      const res = await fetch(GAS_URL, { method: "GET" });
-      if (!res.ok) throw new Error("데이터 불러오기 실패");
-      const body = await res.json();
-      votes = body?.data || [];
-      updateTable(); updateStats();
+      showStatus('<i class="fas fa-spinner spin mr-2"></i>서버에 연결 중입니다...', 'info');
+      const controller = new AbortController();
+      const timer = setTimeout(()=>controller.abort(), 20000); // 20초 타임아웃
+      try{
+        const res = await fetch(GAS_URL, { method: "GET", signal: controller.signal });
+        clearTimeout(timer);
+        if (!res.ok) throw new Error('데이터 불러오기 실패');
+        const body = await res.json();
+        votes = body?.data || [];
+        updateTable(); updateStats();
+
+        // 투표 기간 표시
+        updateVotePeriod(body?.settings);
+
+        // 동적 설정 적용
+        updateDynamicSettings(body?.settings);
+
+        // 대학 목록 설정
+        if (body?.settings?.universityList && body.settings.universityList.length > 0) {
+          currentUniversityList = body.settings.universityList;
+          renderUniversityButtons();
+        } else {
+          // 기본값 설정
+          currentUniversityList = [
+            "가톨릭대학교", "가톨릭관동대학교", "가톨릭꽃동네대학교",
+            "가톨릭상지대학교", "대구가톨릭대학교", "목포가톨릭대학교",
+            "부산가톨릭대학교", "서강대학교", "인천가톨릭대학교", "기타(직접입력)"
+          ];
+          renderUniversityButtons();
+        }
+
+        // 시간 불가 설정 적용
+        updateUnavailableTimes(body?.settings?.unavailableTimes);
+        showStatus('<i class="fas fa-check mr-2"></i>서버 연결 완료.', 'ok');
+        setTimeout(hideStatus, 1200);
+      }catch(err){
+        clearTimeout(timer);
+        showStatus('<i class="fas fa-triangle-exclamation mr-2"></i>서버 연결 실패: '+ (err.message||'오류'), 'err');
+      }
     }
 
     function rowToHtml(v) {
       return `
-        <tr>
-          <td class="border border-gray-300 px-3 py-2">${v.number}</td>
-          <td class="border border-gray-300 px-3 py-2">${v.school}</td>
-          <td class="border border-gray-300 px-3 py-2">${v.name}</td>
-          <td class="border border-gray-300 px-3 py-2">${v.studentId}</td>
-          <td class="border border-gray-300 px-3 py-2 text-center">${v.unavailable9 ? "❌" : "⭕"}</td>
-          <td class="border border-gray-300 px-3 py-2 text-center">${v.unavailable10 ? "❌" : "⭕"}</td>
-          <td class="border border-gray-300 px-3 py-2 text-center">${v.unavailable11 ? "❌" : "⭕"}</td>
-          <td class="border border-gray-300 px-3 py-2 text-center">${v.unavailable12 ? "❌" : "⭕"}</td>
+        <tr class="hover:bg-blue-50 transition-colors duration-200">
+          <td class="px-6 py-4 font-medium text-gray-900">${v.number}</td>
+          <td class="px-6 py-4 text-gray-700">
+            <div class="flex items-center">
+              <i class="fas fa-university mr-2 text-blue-500"></i>
+              ${v.school}
+            </div>
+          </td>
+          <td class="px-6 py-4 text-gray-700">
+            <div class="flex items-center">
+              <i class="fas fa-user mr-2 text-purple-500"></i>
+              ${v.name}
+            </div>
+          </td>
+          <td class="px-6 py-4 text-gray-700">
+            <div class="flex items-center">
+              <i class="fas fa-id-card mr-2 text-green-500"></i>
+              ${v.studentId}
+            </div>
+          </td>
+          <td class="px-6 py-4 text-center">
+            <span class="inline-flex items-center justify-center w-8 h-8 rounded-full ${v.unavailable9 ? 'bg-red-100 text-red-600' : 'bg-green-100 text-green-600'}">
+              ${v.unavailable9 ? '<i class="fas fa-times text-sm"></i>' : '<i class="fas fa-check text-sm"></i>'}
+            </span>
+          </td>
+          <td class="px-6 py-4 text-center">
+            <span class="inline-flex items-center justify-center w-8 h-8 rounded-full ${v.unavailable10 ? 'bg-red-100 text-red-600' : 'bg-green-100 text-green-600'}">
+              ${v.unavailable10 ? '<i class="fas fa-times text-sm"></i>' : '<i class="fas fa-check text-sm"></i>'}
+            </span>
+          </td>
+          <td class="px-6 py-4 text-center">
+            <span class="inline-flex items-center justify-center w-8 h-8 rounded-full ${v.unavailable11 ? 'bg-red-100 text-red-600' : 'bg-green-100 text-green-600'}">
+              ${v.unavailable11 ? '<i class="fas fa-times text-sm"></i>' : '<i class="fas fa-check text-sm"></i>'}
+            </span>
+          </td>
+          <td class="px-6 py-4 text-center">
+            <span class="inline-flex items-center justify-center w-8 h-8 rounded-full ${v.unavailable12 ? 'bg-red-100 text-red-600' : 'bg-green-100 text-green-600'}">
+              ${v.unavailable12 ? '<i class="fas fa-times text-sm"></i>' : '<i class="fas fa-check text-sm"></i>'}
+            </span>
+          </td>
         </tr>`;
     }
 
@@ -203,23 +675,307 @@
     }
 
     function updateStats() {
-      document.getElementById("totalCount").textContent = votes.length;
-      document.getElementById("time9Count").textContent = votes.filter(v => v.unavailable9).length;
-      document.getElementById("time10Count").textContent = votes.filter(v => v.unavailable10).length;
-      document.getElementById("time11Count").textContent = votes.filter(v => v.unavailable11).length;
-      document.getElementById("time12Count").textContent = votes.filter(v => v.unavailable12).length;
+      const totalVotes = votes.length;
+
+      // 동적 시간 옵션에 맞게 카운트 계산
+      const timeCounts = currentTimeOptions.map(option => {
+        const count = votes.filter(v => v[`unavailable${option.id}`]).length;
+        return count;
+      });
+
+      // 기본 카운트 업데이트
+      document.getElementById("totalCount").textContent = totalVotes;
+
+      // 동적 시간 옵션 카운트 업데이트
+      currentTimeOptions.forEach((option, index) => {
+        const countElement = document.getElementById(`time${option.id}Count`);
+        if (countElement) {
+          countElement.textContent = timeCounts[index];
+        }
+      });
+
+      // 대시보드 기능들
+      updateDashboard(totalVotes, ...timeCounts);
+    }
+
+    let currentTimeOptions = [];
+    let currentUniversityList = [];
+
+    function updateDashboard(total, ...timeCounts) {
+      // 총 투표수 프로그레스 바 애니메이션
+      const maxExpected = 100; // 예상 최대 투표수
+      const progressPercent = Math.min((total / maxExpected) * 100, 100);
+      setTimeout(() => {
+        document.getElementById('totalProgress').style.width = progressPercent + '%';
+      }, 100);
+
+      // 미니 차트 바 애니메이션 (동적 시간 옵션에 맞게)
+      const maxUnavailable = Math.max(...timeCounts, 1);
+      setTimeout(() => {
+        timeCounts.forEach((count, index) => {
+          const barElement = document.getElementById(`bar${index + 9}`);
+          if (barElement) {
+            barElement.style.height = (count / maxUnavailable) * 100 + '%';
+          }
+        });
+      }, 200);
+
+      // 참여율 계산 및 표시
+      const participationPercent = total > 0 ? Math.round((total / 50) * 100) : 0; // 50명을 기준으로 계산
+      document.getElementById('participationPercent').textContent = participationPercent + '%';
+
+      // 참여율 원형 차트 애니메이션
+      const circumference = 2 * Math.PI * 40; // r=40
+      const offset = circumference - (participationPercent / 100) * circumference;
+      setTimeout(() => {
+        document.getElementById('participationCircle').style.strokeDashoffset = offset;
+      }, 300);
+
+      // 인기 시간대 계산 (동적 옵션에 맞게)
+      const timeCountsWithInfo = timeCounts.map((count, index) => ({
+        time: currentTimeOptions[index]?.label || `${9 + index}시`,
+        count: count,
+        emoji: currentTimeOptions[index]?.emoji || '🕐'
+      }));
+
+      // 가장 적은 불가 선택 = 가장 인기 있는 시간대
+      const popularTime = timeCountsWithInfo.reduce((min, current) =>
+        current.count < min.count ? current : min
+      );
+
+      document.getElementById('popularTime').textContent = popularTime.time;
+      document.getElementById('popularTimeEmoji').textContent = popularTime.emoji;
+
+      // 최근 활동 데이터
+      const today = new Date();
+      const todayVotes = votes.filter(v => {
+        const voteDate = new Date(v.timestamp);
+        return voteDate.toDateString() === today.toDateString();
+      }).length;
+
+      const weekStart = new Date(today);
+      weekStart.setDate(today.getDate() - 7);
+      const weekVotes = votes.filter(v => {
+        const voteDate = new Date(v.timestamp);
+        return voteDate >= weekStart;
+      }).length;
+
+      document.getElementById('todayVotes').textContent = todayVotes;
+      document.getElementById('weekVotes').textContent = weekVotes;
+      document.getElementById('avgParticipation').textContent = total > 0 ? Math.round((weekVotes / 7) * 100) + '%' : '0%';
+    }
+
+    function updateVotePeriod(settings) {
+      const periodDiv = document.getElementById("votePeriod");
+      const periodText = document.getElementById("votePeriodText");
+
+      if (!settings) {
+        periodDiv.classList.add('hidden');
+        return;
+      }
+
+      const { voteStartDate, voteEndDate, voteStartTime, voteEndTime } = settings;
+      let periodStr = '';
+
+      if (voteStartDate && voteEndDate) {
+        if (voteStartDate === voteEndDate) {
+          periodStr = `${voteStartDate}`;
+        } else {
+          periodStr = `${voteStartDate} ~ ${voteEndDate}`;
+        }
+      } else if (voteStartDate) {
+        periodStr = `${voteStartDate}부터`;
+      } else if (voteEndDate) {
+        periodStr = `${voteEndDate}까지`;
+      }
+
+      if (voteStartTime && voteEndTime) {
+        periodStr += ` ${voteStartTime} ~ ${voteEndTime}`;
+      } else if (voteStartTime) {
+        periodStr += ` ${voteStartTime}부터`;
+      } else if (voteEndTime) {
+        periodStr += ` ${voteEndTime}까지`;
+      }
+
+      if (periodStr.trim()) {
+        periodText.textContent = periodStr.trim();
+        periodDiv.classList.remove('hidden');
+      } else {
+        periodDiv.classList.add('hidden');
+      }
+    }
+
+    function updateDynamicSettings(settings) {
+      if (!settings) return;
+
+      // 투표 제목 업데이트
+      if (settings.votingTitle) {
+        document.getElementById('votingTitleDisplay').textContent = settings.votingTitle;
+      }
+
+      // 투표 설명 업데이트
+      if (settings.votingDescription) {
+        document.getElementById('votingDescriptionDisplay').textContent = settings.votingDescription;
+      }
+
+      // 시간 옵션 업데이트
+      if (settings.timeOptions && settings.timeOptions.length > 0) {
+        currentTimeOptions = settings.timeOptions;
+        updateTimeOptions(settings.timeOptions, settings.allowAllAvailable);
+        updateMiniChartBars(settings.timeOptions);
+      } else {
+        // 기본값 설정
+        currentTimeOptions = [
+          { id: '9', emoji: '🕘', label: '9시', description: '불가능' },
+          { id: '10', emoji: '🕙', label: '10시', description: '불가능' },
+          { id: '11', emoji: '🕚', label: '11시', description: '불가능' },
+          { id: '12', emoji: '🕛', label: '12시', description: '불가능' }
+        ];
+        updateTimeOptions(currentTimeOptions, settings.allowAllAvailable);
+        updateMiniChartBars(currentTimeOptions);
+      }
+
+      // 시간 섹션 제목 업데이트
+      if (settings.timeOptions && settings.timeOptions.length > 0) {
+        const firstOption = settings.timeOptions[0];
+        const sectionTitle = `${firstOption.label} ${firstOption.description}`;
+        document.getElementById('timeSectionTitle').textContent = sectionTitle;
+      }
+    }
+
+    function updateTimeOptions(timeOptions, allowAllAvailable) {
+      const grid = document.getElementById('timeOptionsGrid');
+      grid.innerHTML = '';
+
+      // 모든 시간 가능 옵션 추가
+      if (allowAllAvailable) {
+        const allAvailableLabel = document.createElement('label');
+        allAvailableLabel.className = 'group cursor-pointer';
+        allAvailableLabel.innerHTML = `
+          <div class="bg-gradient-to-br from-green-50 to-emerald-50 p-4 rounded-xl border-2 border-gray-200 hover:border-green-300 transition-all duration-300 shadow-sm hover:shadow-md">
+            <div class="flex items-center justify-between mb-2">
+              <input type="checkbox" name="allAvailable" class="checkbox-modern" />
+              <span class="text-2xl">✅</span>
+            </div>
+            <div class="text-center">
+              <div class="text-lg font-semibold text-green-600">모든 시간 가능</div>
+              <div class="text-sm text-gray-500">가능</div>
+            </div>
+          </div>
+        `;
+        grid.appendChild(allAvailableLabel);
+
+        // 모든 시간 가능 체크박스 이벤트
+        const allAvailableCheckbox = allAvailableLabel.querySelector('input[name="allAvailable"]');
+        allAvailableCheckbox.addEventListener('change', function() {
+          const timeCheckboxes = grid.querySelectorAll('input[name="time"]:not(:disabled)');
+          timeCheckboxes.forEach(cb => {
+            if (this.checked) {
+              cb.checked = false;
+            }
+          });
+        });
+      }
+
+      // 시간 옵션들 추가
+      timeOptions.forEach(option => {
+        const label = document.createElement('label');
+        label.className = 'group cursor-pointer';
+        label.innerHTML = `
+          <div class="bg-white p-4 rounded-xl border-2 border-gray-200 hover:border-red-300 transition-all duration-300 shadow-sm hover:shadow-md">
+            <div class="flex items-center justify-between mb-2">
+              <input type="checkbox" name="time" value="${option.id}" class="checkbox-modern" />
+              <span class="text-2xl">${option.emoji}</span>
+            </div>
+            <div class="text-center">
+              <div class="text-lg font-semibold text-gray-800">${option.label}</div>
+              <div class="text-sm text-gray-500">${option.description}</div>
+            </div>
+          </div>
+        `;
+        grid.appendChild(label);
+
+        // 시간 체크박스 이벤트 (모든 시간 가능과 연동)
+        const timeCheckbox = label.querySelector('input[name="time"]');
+        timeCheckbox.addEventListener('change', function() {
+          if (this.checked && allowAllAvailable) {
+            const allAvailableCheckbox = grid.querySelector('input[name="allAvailable"]');
+            if (allAvailableCheckbox) {
+              allAvailableCheckbox.checked = false;
+            }
+          }
+        });
+      });
+    }
+
+    function updateMiniChartBars(timeOptions) {
+      const chartContainer = document.querySelector('.flex.items-end.justify-between.h-16.px-2');
+      if (!chartContainer) return;
+
+      chartContainer.innerHTML = '';
+
+      timeOptions.forEach((option, index) => {
+        const barContainer = document.createElement('div');
+        barContainer.className = 'flex flex-col items-center';
+        barContainer.innerHTML = `
+          <div class="w-3 bg-orange-400 rounded-t mb-1 transition-all duration-1000" id="bar${option.id}" style="height: 0%"></div>
+          <span class="text-xs text-gray-500">${option.label.replace('시', '')}</span>
+        `;
+        chartContainer.appendChild(barContainer);
+      });
+    }
+
+    function updateUnavailableTimes(unavailableTimes) {
+      if (!unavailableTimes) return;
+
+      const timeMap = {
+        unavailable9: 'time9',
+        unavailable10: 'time10',
+        unavailable11: 'time11',
+        unavailable12: 'time12'
+      };
+
+      Object.entries(timeMap).forEach(([settingKey, inputName]) => {
+        const checkbox = document.querySelector(`input[name="time"][value="${inputName.replace('time', '')}"]`);
+        const label = checkbox?.closest('label');
+
+        if (checkbox && label) {
+          if (unavailableTimes[settingKey]) {
+            // 관리자가 불가능으로 설정한 시간은 비활성화
+            checkbox.disabled = true;
+            checkbox.checked = true;
+            label.style.opacity = '0.5';
+            label.style.pointerEvents = 'none';
+            label.title = '관리자에 의해 선택할 수 없는 시간입니다';
+          } else {
+            // 가능한 시간은 정상 상태로
+            checkbox.disabled = false;
+            checkbox.checked = false;
+            label.style.opacity = '1';
+            label.style.pointerEvents = 'auto';
+            label.title = '';
+          }
+        }
+      });
     }
 
     function validateForm() {
       const name = document.getElementById('name');
       const studentId = document.getElementById('studentId');
       const school = schoolHidden.value.trim();
-      const times = Array.from(document.querySelectorAll('input[name="time"]:checked')).map(i=>i.value);
+      const times = Array.from(document.querySelectorAll('input[name="time"]:checked:not(:disabled)')).map(i=>i.value);
+      const allAvailable = document.querySelector('input[name="allAvailable"]')?.checked;
 
-      if(!school) { alert('소속 대학을 선택하거나 입력하세요.'); return false; }
-      if(!name.checkValidity()) { alert(name.title); name.focus(); return false; }
-      if(!studentId.checkValidity()) { alert(studentId.title); studentId.focus(); return false; }
-      if(times.length===0) { alert('최소 1개 이상의 불가능 시간을 선택하세요.'); return false; }
+      if(!school) { showStatus('소속 대학을 선택하거나 입력하세요.', 'warn'); return false; }
+      if(!name.checkValidity()) { showStatus(name.title, 'warn'); name.focus(); return false; }
+      if(!studentId.checkValidity()) { showStatus(studentId.title, 'warn'); studentId.focus(); return false; }
+
+      // 모든 시간 가능이 체크되어 있거나, 불가능 시간이 선택되어 있어야 함
+      if (!allAvailable && times.length === 0) {
+        showStatus('불가능 시간을 선택하거나 "모든 시간 가능"을 선택하세요.', 'warn');
+        return false;
+      }
+
       return true;
     }
 
@@ -228,25 +984,33 @@
       if(!validateForm()) return;
       const submitBtn = document.getElementById("submitBtn");
       submitBtn.disabled = true;
+      showStatus('<i class="fas fa-spinner spin mr-2"></i>제출 중입니다. 잠시만 기다려주세요...', 'info');
 
       const fd = new FormData(e.target);
+      const selectedTimes = fd.getAll("time");
+      const allAvailable = fd.get("allAvailable") === "on";
+
+      // 동적 시간 옵션에 맞게 데이터 구성
       const payload = {
         action: "create",
-        number: null, // 서버 자동
+        number: null,
         school: (fd.get("school")||"").trim(),
         name: (document.getElementById("name").value||"").trim(),
         studentId: (document.getElementById("studentId").value||"").trim(),
-        unavailable9: fd.getAll("time").includes("9"),
-        unavailable10: fd.getAll("time").includes("10"),
-        unavailable11: fd.getAll("time").includes("11"),
-        unavailable12: fd.getAll("time").includes("12"),
+        selectedTimes: selectedTimes,
+        allAvailable: allAvailable,
         timestamp: new Date().toISOString()
       };
+
+      // 동적 시간 옵션들에 대한 불가 여부 추가
+      currentTimeOptions.forEach(option => {
+        payload[`unavailable${option.id}`] = selectedTimes.includes(option.id);
+      });
 
       try {
         const res = await fetch(GAS_URL, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          // 헤더 미설정 → 프리플라이트 방지
           body: JSON.stringify(payload)
         });
         const out = await res.json();
@@ -257,20 +1021,21 @@
         customWrap.classList.add('hidden'); schoolHidden.value=''; customInput.value='';
 
         await fetchVotes();
-        alert("제출이 완료되었습니다!");
+        showStatus('<i class="fas fa-check mr-2"></i>제출이 완료되었습니다!', 'ok');
+        setTimeout(hideStatus, 1500);
       } catch (err) {
-        alert(err.message || "제출 중 오류가 발생했습니다.");
+        showStatus('<i class="fas fa-triangle-exclamation mr-2"></i>'+ (err.message || '제출 중 오류가 발생했습니다.'), 'err');
       } finally {
         submitBtn.disabled = false;
       }
     });
 
-    document.getElementById("downloadBtn").addEventListener("click", () => {
-      window.open(GAS_URL + "?format=csv", "_blank"); // 마스킹 CSV
+    document.getElementById("adminBtn").addEventListener("click", () => {
+      window.open("admin.html", "_blank");
     });
 
     // 초기 로드
-    fetchVotes().catch(err => alert("서버 연결 실패: " + err.message));
+    fetchVotes();
   </script>
 </body>
 </html>
