@@ -387,6 +387,11 @@
     function showAdminSection() {
       document.getElementById('authSection').classList.add('hidden');
       document.getElementById('adminSection').classList.remove('hidden');
+
+      // 인증 성공 시 자동으로 설정 불러오기
+      setTimeout(() => {
+        loadSettings();
+      }, 500);
     }
 
     function showAuthSection() {
@@ -527,7 +532,8 @@
     window.addUniversity = addUniversity;
     window.removeUniversity = removeUniversity;
 
-    document.getElementById('btnLoadSettings').addEventListener('click', async () => {
+    // 설정 불러오기 함수
+    async function loadSettings() {
       try {
         const res = await fetch(currentGasUrl + '?apiKey=' + encodeURIComponent(currentApiKey));
 
@@ -581,19 +587,21 @@
               currentTimeOptions.forEach(option => {
                 const checkbox = document.getElementById(`unavailable${option.id}`);
                 if (checkbox) {
-                  // 동적으로 생성된 프로퍼티 키에서 값 가져오기
                   checkbox.checked = data.settings.unavailableTimes[`unavailable${option.id}`] || false;
                 }
               });
             }
           }, 100);
 
-          alert('설정을 불러왔습니다.');
+          console.log('설정을 불러왔습니다.');
         }
       } catch (err) {
+        console.error('설정 불러오기 실패:', err);
         alert('설정 불러오기 실패: ' + (err.message || '오류'));
       }
-    });
+    }
+
+    document.getElementById('btnLoadSettings').addEventListener('click', loadSettings);
 
     document.getElementById('btnUpdateSettings').addEventListener('click', async () => {
       // 동적 unavailableTimes 생성 (시간 옵션 ID 기반)

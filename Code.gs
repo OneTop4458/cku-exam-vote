@@ -106,11 +106,34 @@ function doOptions(e) {
   return ContentService.createTextOutput('');
 }
 function _json(obj) {
-  return ContentService.createTextOutput(JSON.stringify(obj)).setMimeType(ContentService.MimeType.JSON);
+  return ContentService
+    .createTextOutput(JSON.stringify(obj))
+    .setMimeType(ContentService.MimeType.JSON)
+    .setHeaders({
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type, Authorization'
+    });
 }
 
 /** ---------- Handlers ---------- */
 function doGet(e) {
+  // CORS 헤더 추가
+  const corsHeaders = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Access-Control-Max-Age': '86400'
+  };
+
+  // OPTIONS 요청 처리 (CORS preflight)
+  if (e && e.parameter && e.parameter.method === 'OPTIONS') {
+    return ContentService
+      .createTextOutput('')
+      .setMimeType(ContentService.MimeType.TEXT)
+      .setHeaders(corsHeaders);
+  }
+
   const sh = _getSheet_();
   const last = sh.getLastRow();
   const values = last > 1 ? sh.getRange(2,1,last-1,9).getValues() : [];
@@ -187,6 +210,22 @@ function doGet(e) {
 }
 
 function doPost(e) {
+  // CORS 헤더 추가
+  const corsHeaders = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Access-Control-Max-Age': '86400'
+  };
+
+  // OPTIONS 요청 처리 (CORS preflight)
+  if (e && e.parameter && e.parameter.method === 'OPTIONS') {
+    return ContentService
+      .createTextOutput('')
+      .setMimeType(ContentService.MimeType.TEXT)
+      .setHeaders(corsHeaders);
+  }
+
   try {
     const body = JSON.parse(e.postData.contents || '{}');
     const sh = _getSheet_();
