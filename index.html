@@ -1,0 +1,276 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>토요일 시험 시간 투표</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" />
+  <meta name="color-scheme" content="light only" />
+  <style>
+    .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0}
+    .univ-selected{outline:2px solid #2563eb;background:#dbeafe}
+  </style>
+</head>
+<body class="bg-gray-100 min-h-screen py-8">
+  <div class="max-w-5xl mx-auto px-4">
+    <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+      <h1 class="text-2xl font-bold text-center text-gray-800 mb-2">시험 시간 투표</h1>
+      <p class="text-center text-gray-600 mb-6">토요일에 <b>불가능한 시간만</b> 체크해주세요.</p>
+
+      <!-- 반드시 서버 URL만 사용 -->
+      <script>
+        // 여기에 Apps Script 웹앱 URL(끝이 /exec)만 입력하세요.
+        const GAS_URL = window.GAS_URL || "PASTE_YOUR_APPS_SCRIPT_WEBAPP_URL_HERE";
+        if (!/^https?:\/\//.test(GAS_URL)) {
+          alert("서버 URL이 설정되지 않았습니다. index.html 상단의 GAS_URL을 설정해주세요.");
+        }
+      </script>
+
+      <form id="voteForm" class="space-y-6" autocomplete="on" novalidate>
+        <!-- 순번: 서버에서 자동 할당 -->
+        <input type="hidden" id="number" name="number" />
+
+        <!-- 소속 대학 -->
+        <section id="step1">
+          <div class="mb-2 font-medium text-gray-800">소속 대학을 선택하세요.</div>
+          <div id="univButtons" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2"></div>
+          <div id="customUnivWrap" class="mt-2 hidden">
+            <label for="customUniv" class="block text-sm text-gray-700 mb-1">기타(직접입력)</label>
+            <input type="text" id="customUniv" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500" placeholder="소속 대학을 입력하세요" />
+          </div>
+          <input type="hidden" id="school" name="school" required />
+          <p class="text-xs text-gray-500 mt-1">※ 반드시 위 버튼에서 선택하거나 '기타'를 입력해야 합니다.</p>
+        </section>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div>
+            <label for="name" class="block text-sm font-medium text-gray-700 mb-1">성명</label>
+            <input type="text" id="name" name="name" required pattern="^[가-힣a-zA-Z\s]{2,30}$" title="2~30자 한글/영문으로 입력" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500" />
+          </div>
+          <div>
+            <label for="studentId" class="block text-sm font-medium text-gray-700 mb-1">학번</label>
+            <input type="text" id="studentId" name="studentId" required pattern="^[A-Za-z0-9-_]{5,20}$" title="5~20자, 영문/숫자/-/_ 사용 가능" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500" />
+            <p class="text-xs text-gray-500 mt-1">※ 재투표 방지용으로 사용됩니다.</p>
+          </div>
+        </div>
+
+        <fieldset class="bg-red-50 p-4 rounded-md">
+          <legend class="text-lg font-medium text-gray-800 mb-3">토요일 불가능한 시간</legend>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <label class="flex items-center space-x-2 cursor-pointer">
+              <input type="checkbox" name="time" value="9" class="form-checkbox h-5 w-5 text-red-600" />
+              <span class="text-sm">9시 불가능</span>
+            </label>
+            <label class="flex items-center space-x-2 cursor-pointer">
+              <input type="checkbox" name="time" value="10" class="form-checkbox h-5 w-5 text-red-600" />
+              <span class="text-sm">10시 불가능</span>
+            </label>
+            <label class="flex items-center space-x-2 cursor-pointer">
+              <input type="checkbox" name="time" value="11" class="form-checkbox h-5 w-5 text-red-600" />
+              <span class="text-sm">11시 불가능</span>
+            </label>
+            <label class="flex items-center space-x-2 cursor-pointer">
+              <input type="checkbox" name="time" value="12" class="form-checkbox h-5 w-5 text-red-600" />
+              <span class="text-sm">12시 불가능</span>
+            </label>
+          </div>
+          <p class="text-xs text-gray-500 mt-2">※ 최소 1개 이상 선택해주세요.</p>
+        </fieldset>
+
+        <div class="text-center">
+          <button id="submitBtn" type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-6 rounded-md transition duration-300 disabled:opacity-50 disabled:cursor-not-allowed">
+            <i class="fas fa-vote-yea mr-2"></i>투표하기
+          </button>
+        </div>
+
+        <p id="formHelp" class="sr-only" aria-live="polite"></p>
+      </form>
+    </div>
+
+    <div class="bg-white rounded-lg shadow-lg p-6">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-xl font-bold text-gray-800">투표 현황</h2>
+        <div class="space-x-2">
+          <button id="downloadBtn" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md text-sm transition duration-300" title="마스킹된 CSV 내려받기">
+            <i class="fas fa-download mr-1"></i>CSV 다운로드(마스킹)
+          </button>
+        </div>
+      </div>
+
+      <div class="mb-4 grid grid-cols-2 md:grid-cols-5 gap-2 text-center">
+        <div class="bg-blue-100 p-3 rounded">
+          <div class="text-2xl font-bold text-blue-600" id="totalCount">0</div>
+          <div class="text-sm text-gray-600">총 투표수</div>
+        </div>
+        <div class="bg-red-100 p-3 rounded">
+          <div class="text-2xl font-bold text-red-600" id="time9Count">0</div>
+          <div class="text-sm text-gray-600">9시 불가</div>
+        </div>
+        <div class="bg-red-100 p-3 rounded">
+          <div class="text-2xl font-bold text-red-600" id="time10Count">0</div>
+          <div class="text-sm text-gray-600">10시 불가</div>
+        </div>
+        <div class="bg-red-100 p-3 rounded">
+          <div class="text-2xl font-bold text-red-600" id="time11Count">0</div>
+          <div class="text-sm text-gray-600">11시 불가</div>
+        </div>
+        <div class="bg-red-100 p-3 rounded">
+          <div class="text-2xl font-bold text-red-600" id="time12Count">0</div>
+          <div class="text-sm text-gray-600">12시 불가</div>
+        </div>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full table-auto border-collapse border border-gray-300">
+          <thead>
+            <tr class="bg-gray-50">
+              <th class="border border-gray-300 px-3 py-2 text-left">순번</th>
+              <th class="border border-gray-300 px-3 py-2 text-left">소속학교</th>
+              <th class="border border-gray-300 px-3 py-2 text-left">성명</th>
+              <th class="border border-gray-300 px-3 py-2 text-left">학번</th>
+              <th class="border border-gray-300 px-3 py-2 text-center">9시</th>
+              <th class="border border-gray-300 px-3 py-2 text-center">10시</th>
+              <th class="border border-gray-300 px-3 py-2 text-center">11시</th>
+              <th class="border border-gray-300 px-3 py-2 text-center">12시</th>
+            </tr>
+          </thead>
+          <tbody id="voteTable"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const UNIVS = ["가톨릭대학교","가톨릭관동대학교","가톨릭꽃동네대학교","가톨릭상지대학교","대구가톨릭대학교","목포가톨릭대학교","부산가톨릭대학교","서강대학교","인천가톨릭대학교","기타(직접입력)"];
+    const univButtons = document.getElementById("univButtons");
+    const schoolHidden = document.getElementById("school");
+    const customWrap = document.getElementById("customUnivWrap");
+    const customInput = document.getElementById("customUniv");
+
+    // Render univ buttons
+    UNIVS.forEach(u=>{
+      const btn=document.createElement('button');
+      btn.type='button';
+      btn.className='bg-gray-100 hover:bg-gray-200 rounded px-3 py-2 text-sm';
+      btn.textContent=u;
+      btn.addEventListener('click',()=>{
+        [...univButtons.querySelectorAll('button')].forEach(b=>b.classList.remove('univ-selected'));
+        btn.classList.add('univ-selected');
+        if(u.includes('기타')) {
+          customWrap.classList.remove('hidden');
+          customInput.focus();
+          schoolHidden.value = '';
+        } else {
+          customWrap.classList.add('hidden');
+          customInput.value='';
+          schoolHidden.value = u;
+        }
+      });
+      univButtons.appendChild(btn);
+    });
+    customInput.addEventListener('input',()=>{
+      schoolHidden.value = customInput.value.trim();
+    });
+
+    let votes = [];
+    async function fetchVotes() {
+      const res = await fetch(GAS_URL, { method: "GET" });
+      if (!res.ok) throw new Error("데이터 불러오기 실패");
+      const body = await res.json();
+      votes = body?.data || [];
+      updateTable(); updateStats();
+    }
+
+    function rowToHtml(v) {
+      return `
+        <tr>
+          <td class="border border-gray-300 px-3 py-2">${v.number}</td>
+          <td class="border border-gray-300 px-3 py-2">${v.school}</td>
+          <td class="border border-gray-300 px-3 py-2">${v.name}</td>
+          <td class="border border-gray-300 px-3 py-2">${v.studentId}</td>
+          <td class="border border-gray-300 px-3 py-2 text-center">${v.unavailable9 ? "❌" : "⭕"}</td>
+          <td class="border border-gray-300 px-3 py-2 text-center">${v.unavailable10 ? "❌" : "⭕"}</td>
+          <td class="border border-gray-300 px-3 py-2 text-center">${v.unavailable11 ? "❌" : "⭕"}</td>
+          <td class="border border-gray-300 px-3 py-2 text-center">${v.unavailable12 ? "❌" : "⭕"}</td>
+        </tr>`;
+    }
+
+    function updateTable() {
+      const tbody = document.getElementById("voteTable");
+      tbody.innerHTML = votes.map(v => rowToHtml(v)).join("");
+    }
+
+    function updateStats() {
+      document.getElementById("totalCount").textContent = votes.length;
+      document.getElementById("time9Count").textContent = votes.filter(v => v.unavailable9).length;
+      document.getElementById("time10Count").textContent = votes.filter(v => v.unavailable10).length;
+      document.getElementById("time11Count").textContent = votes.filter(v => v.unavailable11).length;
+      document.getElementById("time12Count").textContent = votes.filter(v => v.unavailable12).length;
+    }
+
+    function validateForm() {
+      const name = document.getElementById('name');
+      const studentId = document.getElementById('studentId');
+      const school = schoolHidden.value.trim();
+      const times = Array.from(document.querySelectorAll('input[name="time"]:checked')).map(i=>i.value);
+
+      if(!school) { alert('소속 대학을 선택하거나 입력하세요.'); return false; }
+      if(!name.checkValidity()) { alert(name.title); name.focus(); return false; }
+      if(!studentId.checkValidity()) { alert(studentId.title); studentId.focus(); return false; }
+      if(times.length===0) { alert('최소 1개 이상의 불가능 시간을 선택하세요.'); return false; }
+      return true;
+    }
+
+    document.getElementById("voteForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      if(!validateForm()) return;
+      const submitBtn = document.getElementById("submitBtn");
+      submitBtn.disabled = true;
+
+      const fd = new FormData(e.target);
+      const payload = {
+        action: "create",
+        number: null, // 서버 자동
+        school: (fd.get("school")||"").trim(),
+        name: (document.getElementById("name").value||"").trim(),
+        studentId: (document.getElementById("studentId").value||"").trim(),
+        unavailable9: fd.getAll("time").includes("9"),
+        unavailable10: fd.getAll("time").includes("10"),
+        unavailable11: fd.getAll("time").includes("11"),
+        unavailable12: fd.getAll("time").includes("12"),
+        timestamp: new Date().toISOString()
+      };
+
+      try {
+        const res = await fetch(GAS_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+        const out = await res.json();
+        if (!res.ok || !out.ok) throw new Error(out.message || "제출 실패");
+
+        e.target.reset();
+        [...univButtons.querySelectorAll('button')].forEach(b=>b.classList.remove('univ-selected'));
+        customWrap.classList.add('hidden'); schoolHidden.value=''; customInput.value='';
+
+        await fetchVotes();
+        alert("제출이 완료되었습니다!");
+      } catch (err) {
+        alert(err.message || "제출 중 오류가 발생했습니다.");
+      } finally {
+        submitBtn.disabled = false;
+      }
+    });
+
+    document.getElementById("downloadBtn").addEventListener("click", () => {
+      window.open(GAS_URL + "?format=csv", "_blank"); // 마스킹 CSV
+    });
+
+    // 초기 로드
+    fetchVotes().catch(err => alert("서버 연결 실패: " + err.message));
+  </script>
+</body>
+</html>
