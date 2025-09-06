@@ -589,7 +589,13 @@
       try{
         const res = await fetch(GAS_URL, { method: "GET", signal: controller.signal });
         clearTimeout(timer);
-        if (!res.ok) throw new Error('데이터 불러오기 실패');
+        if (!res.ok) throw new Error(`서버 응답 오류: ${res.status} ${res.statusText}`);
+
+        const contentType = res.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+          throw new Error('서버에서 잘못된 응답 형식 수신 (JSON이 아님)');
+        }
+
         const body = await res.json();
         votes = body?.data || [];
         updateTable(); updateStats();
@@ -739,9 +745,9 @@
       }));
 
       // 가장 적은 불가 선택 = 가장 인기 있는 시간대
-      const popularTime = timeCountsWithInfo.reduce((min, current) =>
+      const popularTime = timeCountsWithInfo.length > 0 ? timeCountsWithInfo.reduce((min, current) =>
         current.count < min.count ? current : min
-      );
+      ) : { time: '데이터 없음', emoji: '❓', count: 0 };
 
       document.getElementById('popularTime').textContent = popularTime.time;
       document.getElementById('popularTimeEmoji').textContent = popularTime.emoji;

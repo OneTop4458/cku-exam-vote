@@ -530,6 +530,11 @@
     document.getElementById('btnLoadSettings').addEventListener('click', async () => {
       try {
         const res = await fetch(currentGasUrl + '?apiKey=' + encodeURIComponent(currentApiKey));
+
+        if (!res.ok) {
+          throw new Error(`서버 응답 오류: ${res.status} ${res.statusText}`);
+        }
+
         const data = await res.json();
 
         if (data.settings) {
